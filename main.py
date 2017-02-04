@@ -6,10 +6,12 @@ SCREEN_SIZE = (500, 500)
 BACKGROUND_COLOR = (40, 40, 40)
 TRANSPARENT = (0, 0, 0, 0)
 
+clock = pg.time.Clock()
+
 
 class Control(object):
     
-    def __init__(self, UP, DOWN, LEFT, RIGHT):
+    def __init__(self):
         self.UP = False
         self.DOWN = False
         self.LEFT = False
@@ -21,43 +23,80 @@ class Control(object):
             if event.type == pg.KEYDOWN:
                 if event.key == 273:
                     self.UP = True
-                    self.DOWN, self.RIGHT, self.LEFT = False, False, False
+
                 if event.key == 274:
                     self.DOWN = True
-                    self.UP, self.RIGHT, self.LEFT = False, False, False
+
                 if event.key == 275:
                     self.RIGHT = True
-                    self.UP, self.DOWN, self.LEFT = False, False, False
+
                 if event.key == 276:
                     self.LEFT = True
-                    self.UP, self.DOWN, self.RIGHT = False, False, False
+
                     
             if event.type == pg.KEYUP:
                 if event.key == 273:
                     self.UP = False
+                    
                 if event.key == 274:
                     self.DOWN = False
+                    
                 if event.key == 275:
                     self.RIGHT = False
+                    
                 if event.key == 276:
                     self.LEFT = False
-        
+
+class Player(object):
+    def __init__(self, input_control):
+        self.xpos = 50
+        self.ypos = 50
+        self.input_control = input_control
+
+    def move(self):
+        if self.input_control.UP == True:
+            self.ypos -= 1
+            
+        if self.input_control.DOWN == True:
+            self.ypos += 1
+            
+        if self.input_control.LEFT == True:
+            self.xpos -= 1
+            
+        if self.input_control.RIGHT == True:
+            self.xpos += 1
+            
 
 
 def main():
+    clock.tick(60)
     pg.init()
     pg.display.set_caption(CAPTION)
-    pg.display.set_mode(SCREEN_SIZE)
-    controls = Control(False, False, False, False)
+    screen = pg.display.set_mode(SCREEN_SIZE)
+    controls = Control()
+    #Player didn't want to reference controls ahead of time, so I had to make the
+    #   controls reference a parameter. Terrible idea, but hey, it works.
+    player = Player(controls)
+    
     while True:
+
+        screen.fill((0, 0, 0))
         controls.get_input()
+        player.move()
+        pg.draw.rect(screen, (100, 100, 100), pg.Rect(player.xpos, player.ypos, 80, 80))
+        pg.display.flip()
+        
         if controls.UP == True:
-            print "UP"
+            pass
+            #print "UP"
         if controls.DOWN == True:
-            print "DOWN"
+            pass
+            #print "DOWN"
         if controls.RIGHT == True:
-            print "RIGHT"
+            pass
+            #print "RIGHT"
         if controls.LEFT == True:
-            print "LEFT"
+            pass
+            #print "LEFT"
 
 main()
