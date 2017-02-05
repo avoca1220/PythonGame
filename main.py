@@ -8,6 +8,25 @@ TRANSPARENT = (0, 0, 0, 0)
 
 clock = pg.time.Clock()
 
+class Grid(object):
+    '''
+    The game's grid, controling which blocks may be walked through and which may not
+    '''
+    def __init__(self):
+        self.array = []
+
+    def load_raw(self, width, height):
+        self.width = width
+        self.height = height
+        for x_it in range(self.width):
+            self.array.append([])
+            
+            for y_it in range(self.height):
+                self.array[x_it].append([0])
+        
+            
+
+
 
 class Control(object):
     
@@ -16,6 +35,7 @@ class Control(object):
         self.DOWN = False
         self.LEFT = False
         self.RIGHT = False
+        self.SPACE = False
         
     def get_input(self):
         for event in pg.event.get():
@@ -33,6 +53,9 @@ class Control(object):
                 if event.key == 276:
                     self.LEFT = True
 
+                if event.key == 32:
+                    self.SPACE = True
+
                     
             if event.type == pg.KEYUP:
                 if event.key == 273:
@@ -47,6 +70,9 @@ class Control(object):
                 if event.key == 276:
                     self.LEFT = False
 
+                if event.key == 32:
+                    self.SPACE = False
+
 class Player(object):
     def __init__(self, input_control):
         self.xpos = 50
@@ -54,19 +80,19 @@ class Player(object):
         self.input_control = input_control
 
     def move(self):
+        
         if self.input_control.UP == True:
-            self.ypos -= 1
+            self.ypos -= 0.5
             
         if self.input_control.DOWN == True:
-            self.ypos += 1
+            self.ypos += 0.5
             
         if self.input_control.LEFT == True:
-            self.xpos -= 1
+            self.xpos -= 0.5
             
         if self.input_control.RIGHT == True:
-            self.xpos += 1
+            self.xpos += 0.5
             
-
 
 def main():
     clock.tick(60)
@@ -74,10 +100,16 @@ def main():
     pg.display.set_caption(CAPTION)
     screen = pg.display.set_mode(SCREEN_SIZE)
     controls = Control()
-    #Player didn't want to reference controls ahead of time, so I had to make the
-    #   controls reference a parameter. Terrible idea, but hey, it works.
+    #Player gets input through 'controls'
     player = Player(controls)
-    
+    grid = Grid()
+    grid.load_raw(50, 10)
+
+    for x_it in range(grid.width):
+        grid.array[x_it][2] = 1
+
+        print grid.array[x_it]
+        
     while True:
 
         screen.fill((0, 0, 0))
@@ -98,5 +130,6 @@ def main():
         if controls.LEFT == True:
             pass
             #print "LEFT"
+        
 
 main()
