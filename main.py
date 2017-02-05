@@ -2,7 +2,7 @@ import os
 import pygame as pg
 
 CAPTION = "Test Program"
-SCREEN_SIZE = (500, 500)
+SCREEN_SIZE = (1420, 800)
 BACKGROUND_COLOR = (40, 40, 40)
 TRANSPARENT = (0, 0, 0, 0)
 
@@ -75,24 +75,49 @@ class Control(object):
 
 class Player(object):
     def __init__(self, input_control):
-        self.xpos = 50
-        self.ypos = 50
+        self.grid = [1, 8]
+        self.xpos = 80
+        self.ypos = 80
         self.input_control = input_control
+
+        self.hrz_speed_base = 2
+        self.vrt_speed_base = 2
 
     def move(self):
         
         if self.input_control.UP == True:
-            self.ypos -= 0.5
-            
+            self.ypos -= self.vrt_speed_base
+            if self.ypos <= (720-(80 * self.grid[1])):
+                self.grid[1] += 1
+
         if self.input_control.DOWN == True:
-            self.ypos += 0.5
+            self.ypos += self.vrt_speed_base
+            if self.ypos > (800-(80 * self.grid[1])):
+                self.grid[1] -= 1
             
         if self.input_control.LEFT == True:
-            self.xpos -= 0.5
+            self.xpos -= self.hrz_speed_base
+            if self.xpos < (80 * self.grid[0]):
+                self.grid[0] -= 1
             
         if self.input_control.RIGHT == True:
-            self.xpos += 0.5
+            self.xpos += self.hrz_speed_base
+            if self.xpos > (80 * self.grid[0]) + 80:
+                self.grid[0] += 1
             
+'''
+0-79 = 9
+80-159 = 8
+160-239 = 7
+240-319 = 6
+320-399 = 5
+400-479 = 4
+480-559 = 3
+560-639 = 2
+640 719 = 1
+720-800 = 0
+'''
+
 
 def main():
     clock.tick(60)
@@ -115,8 +140,10 @@ def main():
         screen.fill((0, 0, 0))
         controls.get_input()
         player.move()
-        pg.draw.rect(screen, (100, 100, 100), pg.Rect(player.xpos, player.ypos, 80, 80))
+        pg.draw.rect(screen, (100, 100, 100), pg.Rect(player.xpos, player.ypos, 80, 160))
         pg.display.flip()
+
+        print "Current grid is " + str(player.grid)
         
         if controls.UP == True:
             pass
